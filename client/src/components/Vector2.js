@@ -3,4 +3,6 @@ export class Vector2 {
         this.x = x;
         this.y = y;
     }
+
+    // duplicate  ( from here we will do )
 }

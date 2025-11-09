@@ -2,10 +2,10 @@ class Resources {
     constructor() {
         // list of resources to load
         this.toLoad = {
-            sky: "./assets/sky.png",
-            ground: "./assets/ground.png",
-            hero: "./assets/hero-sheet.png",
-            shadow: "./assets/shadow.png",
+            sky: "./Assets/sky.png",
+            ground: "./Assets/ground.png",
+            hero: "./Assets/hero-sheet.png",
+            shadow: "./Assets/shadow.png",
 
         };
 
