@@ -4,5 +4,7 @@ export class Vector2 {
         this.y = y;
     }
 
-    // duplicate  ( from here we will do )
+    duplicate(){
+        return new Vector2(this.x, this.y);
+    }
 }

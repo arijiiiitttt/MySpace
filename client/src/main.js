@@ -1,14 +1,17 @@
 import { GameLoop } from './components/GameLoop';
 import { DOWN, Input } from './components/Input';
+import { walls } from './components/levels/level1';
 import { resources } from './components/Resource';
 import { Sprite } from './components/Sprite';
 import { Vector2 } from './components/Vector2';
-import { gridCells } from './helpers/grid';
+import { gridCells, isSpaceFree } from './helpers/grid';
 import { moveTowards } from './helpers/moveTowards';
 import './style.css'
 
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
+
+
 
 const skySprite = new Sprite({
   resource: resources.images.sky,
@@ -27,14 +30,11 @@ const hero = new Sprite({
   hFrames: 3,
   vFrames: 8,
   frame: 1,
-  position: new Vector2(gridCells(6),gridCells(5))
+  position: new Vector2(gridCells(6), gridCells(5))
 });
 
 
-const heroDestinationPosition = new Vector2(
-  gridCells(10), gridCells(5)
-
-);
+const heroDestinationPosition = hero.position.duplicate();
 
 
 
@@ -52,15 +52,16 @@ const input = new Input();
 const update = () => {
 
 
- const distance  = moveTowards(hero , heroDestinationPosition ,1)
-const hasArrived = distance <= 1;
-if(hasArrived){
- tryMove();
-}};
+  const distance = moveTowards(hero, heroDestinationPosition, 1)
+  const hasArrived = distance <= 1;
+  if (hasArrived) {
+    tryMove();
+  }
+};
 
-const tryMove =()=>{
+const tryMove = () => {
 
-  if(!input.direction){
+  if (!input.direction) {
     return;
   }
 
@@ -68,11 +69,11 @@ const tryMove =()=>{
   let nextX = heroDestinationPosition.x;
   let nextY = heroDestinationPosition.y;
 
-const gridSize = 16;
+  const gridSize = 16;
 
-if (input.direction === "DOWN") {
-nextY += gridSize;
-  hero.frame = 0;
+  if (input.direction === "DOWN") {
+    nextY += gridSize;
+    hero.frame = 0;
   }
   if (input.direction === "UP") {
     nextY -= gridSize;
@@ -87,8 +88,10 @@ nextY += gridSize;
     hero.frame = 3;
   }
 
-  heroDestinationPosition.x = nextX;
-  heroDestinationPosition.y = nextY;
+  if (isSpaceFree(walls, nextX, nextY)) {
+    heroDestinationPosition.x = nextX;
+    heroDestinationPosition.y = nextY;
+  }
 }
 
 const draw = () => {
