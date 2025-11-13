@@ -5,6 +5,7 @@ class Resources {
             sky: "./images/sky.png",
             ground: "./images/ground.png",
             hero: "./images/hero-sheet.png",
+            heroine: "./images/heroine-sheet.png",
             shadow: "./images/shadow.png",
 
         };
