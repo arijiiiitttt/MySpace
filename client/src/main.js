@@ -1,109 +1,206 @@
 import { GameLoop } from './components/GameLoop';
-import { DOWN, Input } from './components/Input';
+import { Input } from './components/Input';
 import { walls } from './components/levels/level1';
 import { resources } from './components/Resource';
 import { Sprite } from './components/Sprite';
 import { Vector2 } from './components/Vector2';
 import { gridCells, isSpaceFree } from './helpers/grid';
 import { moveTowards } from './helpers/moveTowards';
-import './style.css'
-
-const canvas = document.getElementById("game-canvas");
-const ctx = canvas.getContext("2d");
+import './style.css';
 
 
+// ====================================================================
+// UI ELEMENTS
+// ====================================================================
+const characterScreen = document.getElementById("character-screen");
+const startBtn = document.getElementById("start-btn");
+const usernameInput = document.getElementById("username");
+const gameCanvas = document.getElementById("game-canvas");
 
-const skySprite = new Sprite({
-  resource: resources.images.sky,
-  frameSize: new Vector2(320, 180)
+let selectedAvatar = null;
+let playerName = "";
+
+
+// ====================================================================
+// CHARACTER SELECTION LOGIC
+// ====================================================================
+document.querySelectorAll(".char-option").forEach(img => {
+  img.addEventListener("click", () => {
+    document.querySelectorAll(".char-option")
+      .forEach(i => i.classList.remove("selected"));
+
+    img.classList.add("selected");
+    selectedAvatar = img.id; // boy or girl
+  });
 });
 
-
-const groundSprite = new Sprite({
-  resource: resources.images.ground,
-  frameSize: new Vector2(320, 180)
-});
-
-const hero = new Sprite({
-  resource: resources.images.hero,
-  frameSize: new Vector2(32, 32),
-  hFrames: 3,
-  vFrames: 8,
-  frame: 1,
-  position: new Vector2(gridCells(6), gridCells(5))
-});
-
-
-const heroDestinationPosition = hero.position.duplicate();
-
-
-
-
-
-const shadow = new Sprite({
-  resource: resources.images.shadow,
-  frameSize: new Vector2(32, 32),
-});
-
-
-
-const input = new Input();
-
-const update = () => {
-
-
-  const distance = moveTowards(hero, heroDestinationPosition, 1)
-  const hasArrived = distance <= 1;
-  if (hasArrived) {
-    tryMove();
+startBtn.onclick = () => {
+  if (!selectedAvatar) {
+    alert("Please select a character!");
+    return;
   }
-};
-
-const tryMove = () => {
-
-  if (!input.direction) {
+  if (usernameInput.value.trim() === "") {
+    alert("Please enter a name!");
     return;
   }
 
+  playerName = usernameInput.value.trim();
 
-  let nextX = heroDestinationPosition.x;
-  let nextY = heroDestinationPosition.y;
+  // Hide selection, show game
+  characterScreen.style.display = "none";
+  gameCanvas.style.display = "block";
 
-  const gridSize = 16;
+  startGame();
+};
 
-  if (input.direction === "DOWN") {
-    nextY += gridSize;
-    hero.frame = 0;
-  }
-  if (input.direction === "UP") {
-    nextY -= gridSize;
-    hero.frame = 6;
-  }
-  if (input.direction === "LEFT") {
-    nextX -= gridSize;
-    hero.frame = 9;
-  }
-  if (input.direction === "RIGHT") {
-    nextX += gridSize;
-    hero.frame = 3;
-  }
 
-  if (isSpaceFree(walls, nextX, nextY)) {
-    heroDestinationPosition.x = nextX;
-    heroDestinationPosition.y = nextY;
-  }
-}
 
-const draw = () => {
-  skySprite.drawImage(ctx, 0, 0);
-  groundSprite.drawImage(ctx, 0, 0);
+// ====================================================================
+// MAIN GAME STARTS HERE
+// ====================================================================
+function startGame() {
 
-  const heroOffsetX = new Vector2(-8, -21);
-  const heroPosX = hero.position.x + heroOffsetX.x;
-  const heroPosY = hero.position.y + 1 + heroOffsetX.y;
-  shadow.drawImage(ctx, heroPosX, heroPosY);
-  hero.drawImage(ctx, heroPosX, heroPosY);
-}
+  const canvas = document.getElementById("game-canvas");
+  const ctx = canvas.getContext("2d");
 
-const gameLoop = new GameLoop(update, draw);
-gameLoop.start();
+  // Make canvas pixel-perfect (NO BLUR)
+  ctx.imageSmoothingEnabled = false;
+
+  const skySprite = new Sprite({
+    resource: resources.images.sky,
+    frameSize: new Vector2(320, 180)
+  });
+
+  const groundSprite = new Sprite({
+    resource: resources.images.ground,
+    frameSize: new Vector2(320, 180)
+  });
+
+  // Choose correct avatar sheet
+  const avatarSheet = selectedAvatar === "boy"
+    ? resources.images.hero
+    : resources.images.heroine;
+
+  const hero = new Sprite({
+    resource: avatarSheet,
+    frameSize: new Vector2(32, 32),
+    hFrames: 3,
+    vFrames: 8,
+    frame: 1,
+    position: new Vector2(gridCells(6), gridCells(5)),
+  });
+
+  const shadow = new Sprite({
+    resource: resources.images.shadow,
+    frameSize: new Vector2(32, 32),
+  });
+
+  const input = new Input();
+  const heroDestinationPosition = hero.position.duplicate();
+
+
+
+  // ====================================================================
+  // UPDATE
+  // ====================================================================
+  const update = (delta) => {
+
+    const distance = moveTowards(hero, heroDestinationPosition, 1);
+    const hasArrived = distance <= 1;
+
+    if (hasArrived) {
+      tryMove();
+    }
+
+    hero.step(delta);
+  };
+
+
+
+  // ====================================================================
+  // MOVEMENT LOGIC
+  // ====================================================================
+  const tryMove = () => {
+
+    if (!input.direction) return;
+
+    let nextX = heroDestinationPosition.x;
+    let nextY = heroDestinationPosition.y;
+
+    const gridSize = 16;
+
+    if (input.direction === "DOWN") {
+      nextY += gridSize;
+      hero.frame = 0;
+    }
+    if (input.direction === "UP") {
+      nextY -= gridSize;
+      hero.frame = 6;
+    }
+    if (input.direction === "LEFT") {
+      nextX -= gridSize;
+      hero.frame = 9;
+    }
+    if (input.direction === "RIGHT") {
+      nextX += gridSize;
+      hero.frame = 3;
+    }
+
+    if (isSpaceFree(walls, nextX, nextY)) {
+      heroDestinationPosition.x = nextX;
+      heroDestinationPosition.y = nextY;
+    }
+  };
+
+
+
+  // ====================================================================
+  // DRAW LOOP
+  // ====================================================================
+  const draw = () => {
+    skySprite.drawImage(ctx, 0, 0);
+    groundSprite.drawImage(ctx, 0, 0);
+
+    const heroOffsetX = new Vector2(-8, -21);
+    const heroPosX = hero.position.x + heroOffsetX.x;
+    const heroPosY = hero.position.y + 1 + heroOffsetX.y;
+
+    shadow.drawImage(ctx, heroPosX, heroPosY);
+    hero.drawImage(ctx, heroPosX, heroPosY);
+
+
+    // ===============================================
+    // PERFECT CRISP PLAYER NAME ABOVE CHARACTER
+    // ===============================================
+    ctx.save();
+
+    ctx.imageSmoothingEnabled = false;
+    ctx.textAlign = "center";
+
+    // Using your pixel font (from style.css)
+    ctx.font = "8px PixelFont";
+
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 3;
+
+    // ↓ Reduced distance between character & name
+    const textX = heroPosX + 16;
+    const textY = heroPosY + 5; // closer and clear
+
+    ctx.strokeText(playerName, textX, textY);
+    ctx.fillText(playerName, textX, textY);
+
+    ctx.restore();
+  };
+
+
+
+  // ====================================================================
+  // START GAME LOOP
+  // ====================================================================
+  const gameLoop = new GameLoop(update, draw);
+  gameLoop.start();
+
+} // END startGame()
+

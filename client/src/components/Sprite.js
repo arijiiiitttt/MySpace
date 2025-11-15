@@ -9,6 +9,7 @@ export class Sprite {
         frame,
         scale,
         position,
+        animations,
     }) {
         this.resource = resource;
         this.frameSize = frameSize ?? new Vector2(16, 16); // {width, height}
@@ -18,6 +19,8 @@ export class Sprite {
         this.frameMap = new Map();
         this.scale = scale ?? 1;
         this.position = position ?? new Vector2(0, 0);
+        this.animations = animations ?? null;
+
         this.buildFrameMap();
     }
 
@@ -27,13 +30,21 @@ export class Sprite {
             for (let h = 0; h < this.hFrames; h++) {
                 this.frameMap.set(
                     frameCount,
-                    new Vector2(this.frameSize.x*h, this.frameSize.y*v))
+                    new Vector2(this.frameSize.x * h, this.frameSize.y * v))
                 frameCount++;
             }
         }
     }
 
-    
+    step(delta) {
+        if (!this.animations) {
+            return;
+        }
+        this.animations.step(delta);
+        this.frame = this.animations.frame;
+    }
+
+
     drawImage(ctx, x, y) {
         if (!this.resource.isLoaded)
             return;
@@ -50,14 +61,14 @@ export class Sprite {
 
         ctx.drawImage(
             this.resource.image,
-    frameCoordX,
-    frameCoordY,
-    frameSizeX,
-    frameSizeY,
-    x,
-    y,
-    frameSizeX*this.scale,
-    frameSizeY*this.scale
+            frameCoordX,
+            frameCoordY,
+            frameSizeX,
+            frameSizeY,
+            x,
+            y,
+            frameSizeX * this.scale,
+            frameSizeY * this.scale
         );
     }
 

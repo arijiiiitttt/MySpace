@@ -12,7 +12,7 @@ const makeStandingFrames = (rootFrame = 0) => {
 }
 
 
-const makeWalikingFrames = (rootFrame = 0) => {
+const makeWalkingFrames = (rootFrame = 0) => {
     return walk = {
         duration: 400,
         frames:
@@ -44,7 +44,7 @@ export const STAND_UP = makeStandingFrames(7);
 export const STAND_LEFT = makeStandingFrames(10);
 
 
-export const WALK_DOWN = makeWalikingFrames(0);
-export const WALK_UP = makeWalikingFrames(6);
-export const WALK_LEFT = makeWalikingFrames(9);
-export const WALK_RIGHT = makeWalikingFrames(3);
+export const WALK_DOWN = makeWalkingFrames(0);
+export const WALK_UP = makeWalkingFrames(6);
+export const WALK_LEFT = makeWalkingFrames(9);
+export const WALK_RIGHT = makeWalkingFrames(3);
