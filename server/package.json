@@ -1,0 +1,20 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Backend server for My Space multiplayer",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+  "start": "nodemon server.mjs",
+  "server": "nodemon server.mjs"
+},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}

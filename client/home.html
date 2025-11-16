@@ -16,31 +16,30 @@
   <!-- ============================= -->
   <!-- CHARACTER SELECTION SCREEN   -->
   <!-- ============================= -->
-  <div id="character-screen"
-    class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-[350px] text-center space-y-6">
+  <div id="character-screen" class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-[350px] text-center space-y-6">
 
     <h2 class="text-2xl font-bold">Choose Your Character</h2>
 
     <!-- Character Options -->
     <div id="character-options" class="flex justify-center space-x-6">
-      <img id="boy" 
-           src="/images/hero-sheet.png" 
-           class="char-option w-24 h-24 rounded-xl border-2 border-transparent hover:scale-105 hover:border-blue-400 transition-all cursor-pointer" />
 
-      <img id="girl" 
-           src="/images/heroine-sheet.png" 
-           class="char-option w-24 h-24 rounded-xl border-2 border-transparent hover:scale-105 hover:border-pink-400 transition-all cursor-pointer" />
+      <!-- SIMPLE BOY IMAGE -->
+      <img id="boy" src="/images/hero.png" data-spritesheet="/images/hero-sheet.png" class="char-option w-24 h-24 rounded-xl border-2 border-transparent 
+              hover:scale-105 hover:border-blue-400 transition-all cursor-pointer" />
+
+      <!-- SIMPLE GIRL IMAGE -->
+      <img id="girl" src="/images/heroine.png" data-spritesheet="/images/heroine-sheet.png" class="char-option h-20 w-20 rounded-xl border-2 border-transparent 
+              hover:scale-105 hover:border-pink-400 transition-all cursor-pointer" />
     </div>
 
+
     <!-- Username Input -->
-    <input 
-      id="username"
+    <input id="username"
       class="w-full px-4 py-2 rounded-xl bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
       placeholder="Enter your name" />
 
     <!-- Start Button -->
-    <button 
-      id="start-btn"
+    <button id="start-btn"
       class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-lg font-semibold transition">
       Start Game
     </button>
@@ -51,7 +50,17 @@
   <!-- GAME CANVAS (HIDDEN AT START) -->
   <!-- ============================= -->
   <canvas id="game-canvas" width="320" height="180" class="hidden"></canvas>
+ <!-- VIDEO UI -->
+  <div class="absolute bottom-4 left-4 flex space-x-3">
+    <video id="localVideo" autoplay muted class="w-28 rounded-xl"></video>
+    <video id="remoteVideo" autoplay class="w-28 rounded-xl"></video>
+  </div>
 
+  <button id="startVideo"
+    class="hidden absolute top-4 right-4 bg-green-600 px-4 py-2 rounded-xl">Start Video Call</button>
+
+  <input type="file" id="fileInput"
+    class="hidden absolute top-20 right-4 bg-gray-800 p-2 rounded-xl" />
   <script type="module" src="/src/main.js"></script>
 </body>
 
