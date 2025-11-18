@@ -1,13 +1,15 @@
 import { WebSocketServer } from 'ws';
-import { walls } from '../client/src/components/levels/level1.js';
-import { isSpaceFree } from '../client/src/helpers/grid.js';
+import { walls } from './game/walls.js';
+import { isSpaceFree } from './game/grid.js';
 
-const wss = new WebSocketServer({ port: 8080 });
-console.log('Server running on ws://localhost:8080');
+const PORT = process.env.PORT || 8080;
+
+const wss = new WebSocketServer({ port: PORT });
+console.log(`Server running on ws://localhost:${PORT}`);
 
 const players = new Map();
 let nextId = 1;
-
+//server
 wss.on('connection', ws => {
   const id = nextId++;
   // Initialize player with a default direction (2 = DOWN)

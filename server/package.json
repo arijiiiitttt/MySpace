@@ -5,7 +5,7 @@
   "main": "server.mjs",
   "type": "module",
   "scripts": {
-  "start": "nodemon server.mjs",
+  "start": "node server.mjs",
   "server": "nodemon server.mjs"
 },
   "keywords": [],
