@@ -1,0 +1,16 @@
+{
+  "name": "myspace",
+  "version": "2.0.0",
+  "private": true,
+  "description": "My Space: a tiny multiplayer pixel-art office in the browser (Phaser + WebSockets + WebRTC)",
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "setup": "npm install --prefix server && npm install --prefix client",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm run build --prefix client",
+    "start": "npm start --prefix server",
+    "test": "npm test --prefix server && npm test --prefix client",
+    "build:world": "npm run build:world --prefix server"
+  }
+}

@@ -1,68 +1,170 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+    <meta name="theme-color" content="#0b1020" />
+    <title>My Space</title>
+    <link rel="icon" type="image/png" href="/logo/icon-32.png" />
+    <link rel="apple-touch-icon" href="/logo/icon-180.png" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
+  </head>
+  <body class="app">
+    <div id="game" aria-hidden="true"></div>
+    <div id="labels" aria-hidden="true"></div>
 
-<head>
-  <meta charset="UTF-8" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="icon" type="image/svg+xml" href="/logo/my-space.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Space</title>
-  <link rel="stylesheet" href="/style.css" />
-</head>
+    <!-- ===================== JOIN ===================== -->
+    <main id="join" class="join">
+      <form id="join-form" class="join__card" autocomplete="off" novalidate>
+        <header class="join__head">
+          <img src="/logo/icon-192.png" width="56" height="56" alt="" class="join__logo" />
+          <div>
+            <h1>My Space</h1>
+            <p>A tiny office in your browser. Walk up to people to talk.</p>
+          </div>
+        </header>
 
+        <fieldset class="field">
+          <legend>Pick your character</legend>
+          <div id="avatar-picker" class="avatars" role="radiogroup" aria-label="Character"></div>
+        </fieldset>
 
-<body class="bg-gray-900 text-white flex justify-center items-center min-h-screen">
+        <label class="field">
+          <span>Your name</span>
+          <input id="name" name="name" type="text" maxlength="20" placeholder="e.g. Ari" required />
+        </label>
 
-  <!-- ============================= -->
-  <!-- CHARACTER SELECTION SCREEN   -->
-  <!-- ============================= -->
-  <div id="character-screen" class="bg-gray-800 p-6 rounded-2xl shadow-2xl w-[350px] text-center space-y-6">
+        <div class="field">
+          <span>Room</span>
+          <div class="room-row">
+            <input id="room" name="room" type="text" maxlength="24" value="lobby" aria-label="Room name" spellcheck="false" />
+            <button id="room-random" type="button" class="btn btn--ghost" title="Make up a private room name">New room</button>
+          </div>
+          <div id="room-list" class="chips" aria-live="polite"></div>
+        </div>
 
-    <h2 class="text-2xl font-bold">Choose Your Character</h2>
+        <label id="key-field" class="field" hidden>
+          <span>Room password <em>(optional, makes a new room private)</em></span>
+          <input id="key" name="key" type="password" maxlength="64" placeholder="Leave empty for an open room" />
+        </label>
 
-    <!-- Character Options -->
-    <div id="character-options" class="flex justify-center space-x-6">
+        <p id="join-error" class="alert" role="alert" hidden></p>
 
-      <!-- SIMPLE BOY IMAGE -->
-      <img id="boy" src="/images/hero.png" data-spritesheet="/images/hero-sheet.png" class="char-option w-24 h-24 rounded-xl border-2 border-transparent 
-              hover:scale-105 hover:border-blue-400 transition-all cursor-pointer" />
+        <button id="join-btn" type="submit" class="btn btn--primary btn--lg" disabled>
+          <span id="join-btn-label">Loading world…</span>
+        </button>
+        <div class="progress" aria-hidden="true"><i id="boot-bar"></i></div>
 
-      <!-- SIMPLE GIRL IMAGE -->
-      <img id="girl" src="/images/heroine.png" data-spritesheet="/images/heroine-sheet.png" class="char-option h-20 w-20 rounded-xl border-2 border-transparent 
-              hover:scale-105 hover:border-pink-400 transition-all cursor-pointer" />
+        <footer class="join__foot">
+          <span id="online-count">&nbsp;</span>
+          <a href="/">About</a>
+        </footer>
+      </form>
+    </main>
+
+    <!-- ===================== HUD ===================== -->
+    <div id="hud" class="hud" hidden>
+      <header class="topbar">
+        <button id="room-pill" class="pill" type="button" title="Copy invite link">
+          <span id="room-name" class="pill__main">lobby</span>
+          <span id="room-lock" hidden></span>
+          <span class="pill__sep"></span>
+          <span id="room-count" class="pill__sub">1 here</span>
+          <span id="copy-ico"></span>
+        </button>
+        <div id="net-badge" class="net" title="Connection"><i></i><span id="net-text">online</span></div>
+      </header>
+
+      <div id="videos" class="videos" aria-label="Nearby video"></div>
+
+      <aside id="side" class="side" hidden>
+        <div class="side__head">
+          <div class="tabs" role="tablist">
+            <button role="tab" data-tab="chat" class="tab is-active" id="tab-chat">Chat <b id="unread" hidden></b></button>
+            <button role="tab" data-tab="people" class="tab" id="tab-people">People</button>
+          </div>
+          <button id="side-close" class="icon-btn" aria-label="Close panel"></button>
+        </div>
+        <section id="chat-pane" class="pane">
+          <ol id="chat-log" class="chat-log" aria-live="polite"></ol>
+          <form id="chat-form" class="chat-form" autocomplete="off">
+            <input id="chat-input" type="text" maxlength="280" placeholder="Message everyone in the room…" aria-label="Message" />
+            <button class="icon-btn icon-btn--accent" type="submit" aria-label="Send" id="chat-send"></button>
+          </form>
+        </section>
+        <section id="people-pane" class="pane" hidden>
+          <div id="map-chips" class="map-chips" aria-label="People on each map"></div>
+          <ul id="people-list" class="people"></ul>
+        </section>
+      </aside>
+
+      <div id="screen-panel" class="screen" hidden>
+        <div class="screen__head">
+          <strong id="screen-title">Computer</strong>
+          <span id="screen-sub" class="muted"></span>
+          <span class="grow"></span>
+          <button id="screen-size" class="btn btn--ghost btn--sm" type="button" title="Make the screen bigger or smaller">Expand</button>
+          <button id="screen-share" class="btn btn--primary btn--sm" type="button"></button>
+          <button id="screen-leave" class="btn btn--ghost btn--sm" type="button">Leave</button>
+        </div>
+        <div class="screen__stage">
+          <video id="screen-video" autoplay playsinline muted></video>
+          <p id="screen-empty" class="screen__empty">Nobody is presenting. Share your screen to show everyone at this computer.</p>
+        </div>
+      </div>
+
+      <div id="toasts" class="toasts" role="status" aria-live="polite"></div>
+
+      <div id="minimap-wrap" class="minimap" title="Click to walk there">
+        <canvas id="minimap" width="160" height="120"></canvas>
+      </div>
+
+      <div id="joystick" class="joystick" hidden><i></i></div>
+
+      <nav class="dock" aria-label="Controls">
+        <button id="btn-mic" class="dock__btn" aria-label="Microphone (M)" title="Microphone (M)"></button>
+        <button id="btn-cam" class="dock__btn" aria-label="Camera (V)" title="Camera (V)"></button>
+        <button id="btn-deaf" class="dock__btn" aria-label="Mute everyone" title="Mute everyone else"></button>
+        <span class="dock__sep"></span>
+        <div class="emote-wrap">
+          <button id="btn-emote" class="dock__btn" aria-label="Emotes" title="Emotes (1–8)" aria-haspopup="true" aria-expanded="false"></button>
+          <div id="emote-menu" class="emote-menu" hidden></div>
+        </div>
+        <button id="btn-chat" class="dock__btn" aria-label="Chat (Enter)" title="Chat (Enter)"></button>
+        <button id="btn-people" class="dock__btn" aria-label="People" title="People"></button>
+        <span class="dock__sep"></span>
+        <button id="btn-profile" class="dock__btn" aria-label="Edit profile" title="Edit profile"></button>
+        <button id="btn-leave" class="dock__btn dock__btn--danger" aria-label="Leave room" title="Leave room"></button>
+      </nav>
+
+      <div id="help" class="help">
+        <span><kbd>WASD</kbd> / arrows move</span>
+        <span><kbd>E</kbd> sit</span>
+        <span><kbd>R</kbd> use</span>
+        <span><kbd>Enter</kbd> chat</span>
+        <span><kbd>1</kbd>–<kbd>8</kbd> emotes</span>
+        <span>click to walk</span>
+        <span>glowing doors change map</span>
+      </div>
     </div>
 
+    <!-- profile dialog -->
+    <dialog id="profile-dialog" class="dialog">
+      <form method="dialog" id="profile-form" class="dialog__card">
+        <h2>Edit profile</h2>
+        <div id="profile-avatars" class="avatars"></div>
+        <label class="field"><span>Name</span><input id="profile-name" maxlength="20" /></label>
+        <div class="dialog__actions">
+          <button value="cancel" class="btn btn--ghost" formnovalidate>Cancel</button>
+          <button value="ok" class="btn btn--primary">Save</button>
+        </div>
+      </form>
+    </dialog>
 
-    <!-- Username Input -->
-    <input id="username"
-      class="w-full px-4 py-2 rounded-xl bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-400 text-center"
-      placeholder="Enter your name" />
+    <div id="reconnect" class="overlay" hidden>
+      <div class="overlay__card"><div class="spinner"></div><p id="reconnect-text">Reconnecting…</p></div>
+    </div>
 
-    <!-- Start Button -->
-    <button id="start-btn"
-      class="w-full py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-lg font-semibold transition">
-      Start Game
-    </button>
-  </div>
-
-
-  <!-- ============================= -->
-  <!-- GAME CANVAS (HIDDEN AT START) -->
-  <!-- ============================= -->
-  <canvas id="game-canvas" width="320" height="180" class="hidden"></canvas>
- <!-- VIDEO UI -->
-  <div class="absolute bottom-4 left-4 flex space-x-3">
-    <video id="localVideo" autoplay muted class="w-28 rounded-xl"></video>
-    <video id="remoteVideo" autoplay class="w-28 rounded-xl"></video>
-  </div>
-
-  <button id="startVideo"
-    class="hidden absolute top-4 right-4 bg-green-600 px-4 py-2 rounded-xl">Start Video Call</button>
-
-  <input type="file" id="fileInput"
-    class="hidden absolute top-20 right-4 bg-gray-800 p-2 rounded-xl" />
-  <script type="module" src="/src/main.js"></script>
-</body>
-
-
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

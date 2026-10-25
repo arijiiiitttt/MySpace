@@ -1,20 +1,20 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "Backend server for My Space multiplayer",
-  "main": "server.mjs",
+  "name": "myspace-server",
+  "version": "2.0.0",
+  "description": "Realtime server for My Space: rooms, movement validation, chat, seats, WebRTC signalling",
+  "private": true,
   "type": "module",
+  "main": "src/index.js",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-  "start": "node server.mjs",
-  "server": "nodemon server.mjs"
-},
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "build:world": "node scripts/build-world.mjs",
+    "test": "node --test \"test/**/*.test.js\""
+  },
   "dependencies": {
     "ws": "^8.18.0"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.7"
   }
 }

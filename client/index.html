@@ -1,32 +1,63 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo/my-space.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Space</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b1020" />
+    <meta name="description" content="My Space is a tiny pixel-art office in your browser. Walk around, chat, talk to people nearby and share your screen." />
+    <title>My Space — a tiny office in your browser</title>
+    <link rel="icon" type="image/png" href="/logo/icon-32.png" />
+    <link rel="apple-touch-icon" href="/logo/icon-180.png" />
+    <link rel="stylesheet" href="/src/styles/landing.css" />
+  </head>
+  <body>
+    <div class="stars" aria-hidden="true"></div>
+    <header class="nav">
+      <a class="brand" href="/"><img src="/logo/icon-32.png" width="28" height="28" alt="" />My Space</a>
+      <a class="nav__link" href="https://github.com/arijiiiitttt/myspace">GitHub</a>
+    </header>
 
-<body class="bg-gradient-to-br from-purple-900 via-indigo-800 to-black
-               flex flex-col items-center justify-center h-screen text-white">
-  
-               <h1>
-                landing page
-               </h1>
+    <main>
+      <section class="hero">
+        <div class="hero__copy">
+          <p class="eyebrow"><span class="live-dot"></span><span id="live">Open now</span></p>
+          <h1>A tiny office<br />in your <em>browser</em>.</h1>
+          <p class="lede">Walk around a pixel-art space with friends or teammates. Step close to someone to talk with voice and video, hop on a computer to share your screen, or just sit down and chat.</p>
+          <div class="cta">
+            <a class="btn btn--primary" href="/home" id="start-btn">Enter My Space</a>
+            <a class="btn btn--ghost" href="#features">How it works</a>
+          </div>
+          <p class="fine">No sign-up. Pick a character, pick a name, walk in.</p>
+        </div>
+        <figure class="hero__shot">
+          <img src="/preview.jpg" width="960" height="600" alt="Screenshot of the My Space office with players walking around" fetchpriority="high" />
+        </figure>
+      </section>
 
-  <button id="start-btn" class="bg-cat text-black px-8 py-4 rounded-full text-xl
-                   font-semibold hover:bg-yellow-300 transition
-                   transform hover:scale-105">
-    Start Game
-  </button>
+      <section id="features" class="features">
+        <article>
+          <h3>Walk up &amp; talk</h3>
+          <p>Voice and video connect automatically when you get close and fade as you walk away, like a real office.</p>
+        </article>
+        <article>
+          <h3>Share your screen</h3>
+          <p>Sit at a computer and present to everyone who is at the same desk. No meeting links.</p>
+        </article>
+        <article>
+          <h3>Private rooms</h3>
+          <p>Make up a room name, add a password, and send your team the invite link.</p>
+        </article>
+        <article>
+          <h3>Works on your phone</h3>
+          <p>Touch joystick, tap-to-walk and a compact layout. Nothing to install.</p>
+        </article>
+      </section>
+    </main>
 
-  <script>
-    document.getElementById('start-btn')
-      .addEventListener('click', () => {
-        window.location.href = '/home';   // clean URL
-      });
-  </script>
-</body>
-
+    <footer class="foot">
+      <span>Made with Phaser, Vite and WebRTC.</span>
+      <span id="stats"></span>
+    </footer>
+    <script type="module" src="/src/landing.js"></script>
+  </body>
 </html>

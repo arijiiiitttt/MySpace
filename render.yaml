@@ -1,0 +1,10 @@
+# Render blueprint: one web service for the site + game server (websockets work out of the box).
+services:
+  - type: web
+    name: myspace
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: TRUST_PROXY
+        value: "true"

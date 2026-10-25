@@ -1,18 +1,18 @@
 {
-  "name": "client",
+  "name": "myspace-client",
+  "version": "2.0.0",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "npm run build && vite preview",
-    "server": "node src/server/server.js"
+    "preview": "vite preview",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
   },
   "devDependencies": {
     "vite": "^7.1.7"
-  },
-  "dependencies": {
-    "ws": "^8.18.0"
   }
 }

@@ -1,0 +1,59 @@
+{
+ "start": "office",
+ "maps": [
+  {
+   "id": "office",
+   "name": "Office",
+   "file": "map.json",
+   "icon": "🏢"
+  },
+  {
+   "id": "library",
+   "name": "Library",
+   "file": "library.json",
+   "icon": "📚"
+  },
+  {
+   "id": "classroom",
+   "name": "Classroom",
+   "file": "classroom.json",
+   "icon": "🎓"
+  },
+  {
+   "id": "lounge",
+   "name": "Lounge",
+   "file": "lounge.json",
+   "icon": "🛋️"
+  },
+  {
+   "id": "conference",
+   "name": "Conference Hall",
+   "file": "conference.json",
+   "icon": "📊"
+  },
+  {
+   "id": "gameroom",
+   "name": "Game Room",
+   "file": "gameroom.json",
+   "icon": "🎮"
+  },
+  {
+   "id": "cafe",
+   "name": "Cafe",
+   "file": "cafe.json",
+   "icon": "☕"
+  },
+  {
+   "id": "apartment",
+   "name": "Apartment",
+   "file": "apartment.json",
+   "icon": "🏠"
+  },
+  {
+   "id": "auditorium",
+   "name": "Auditorium",
+   "file": "auditorium.json",
+   "icon": "🎤"
+  }
+ ]
+}
