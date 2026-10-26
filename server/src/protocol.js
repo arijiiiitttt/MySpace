@@ -36,7 +36,7 @@
 
 export const AVATARS = ["adam", "ash", "lucy", "nancy"];
 
-export const EMOTES = ["👋", "😂", "❤️", "👍", "🎉", "😮", "☕", "🤔"];
+export const EMOTES = ["wave", "laugh", "heart", "like", "party", "wow", "coffee", "think"];
 
 export const LIMITS = {
   NAME_MAX: 20,

@@ -2,6 +2,7 @@ import { bus } from "../app/emitter.js";
 import { MAPS, mapInfo } from "../game/maps.js";
 import { EMOTES, colorFor, AVATARS } from "../net/protocol.js";
 import { icon } from "./icons.js";
+import { fa, EMOTE_ICONS, EMOTE_COLORS } from "./fa.js";
 import { drawAvatar } from "./sprites.js";
 
 const $ = (id) => document.getElementById(id);
@@ -68,10 +69,11 @@ export class Hud {
 
   // ---- toasts -------------------------------------------------------------------
 
-  toast(text, kind = "info", ms = 3200) {
+  toast(text, kind = "info", ms = 3200, iconName = null) {
     const el = document.createElement("div");
     el.className = `toast toast--${kind}`;
-    el.textContent = text;
+    if (iconName) el.innerHTML = fa(iconName) + " ";
+    el.append(document.createTextNode(text));
     $("toasts").append(el);
     while ($("toasts").children.length > 3) $("toasts").firstChild.remove();
     setTimeout(() => {
@@ -130,8 +132,10 @@ export class Hud {
       ...EMOTES.map((e, i) => {
         const b = document.createElement("button");
         b.type = "button";
-        b.textContent = e;
+        b.innerHTML = fa(EMOTE_ICONS[e]);
+        b.firstChild.style.color = EMOTE_COLORS[e];
         b.title = `${e}  (${i + 1})`;
+        b.setAttribute("aria-label", e);
         b.onclick = () => {
           this.session.sendEmote(e);
           this.#closeEmoteMenu();
@@ -297,7 +301,7 @@ export class Hud {
     const here = mapInfo(session.map);
     const n = session.players.size;
     const elsewhere = Object.entries(session.where ?? {}).reduce((sum, [id, c]) => (id === session.map ? sum : sum + c), 0);
-    $("room-count").textContent = `${here.icon ?? ""} ${here.name} · ${n} here${elsewhere ? ` · +${elsewhere}` : ""}`.trim();
+    $("room-count").innerHTML = `${here.icon ? fa(here.icon) + " " : ""}<span>${here.name} · ${n} here${elsewhere ? ` · +${elsewhere}` : ""}</span>`;
     $("room-pill").title = "Copy invite link";
     this.#renderMapChips();
   }
@@ -310,7 +314,8 @@ export class Hud {
       ...MAPS.map((m) => {
         const chip = document.createElement("span");
         chip.className = "map-chip" + (m.id === session.map ? " is-here" : "");
-        chip.textContent = `${m.icon ?? ""} ${m.name} `;
+        chip.innerHTML = `${m.icon ? fa(m.icon) + " " : ""}`;
+        chip.append(document.createTextNode(`${m.name} `));
         const b = document.createElement("b");
         b.textContent = String(session.where?.[m.id] ?? (m.id === session.map ? session.players.size : 0));
         chip.append(b);
@@ -566,7 +571,7 @@ export class Hud {
     on("map:change", ({ map }) => {
       const info = mapInfo(map);
       this.systemMessage(`You are in the ${info.name}`);
-      this.toast(`${info.icon ?? ""} ${info.name}`.trim());
+      this.toast(info.name, "info", 3200, info.icon);
       this.#renderPeople();
     });
     on("player:update", (p, changes) => {

@@ -5,55 +5,97 @@
    "id": "office",
    "name": "Office",
    "file": "map.json",
-   "icon": "🏢"
+   "icon": "building"
   },
   {
    "id": "library",
    "name": "Library",
    "file": "library.json",
-   "icon": "📚"
+   "icon": "book"
   },
   {
    "id": "classroom",
    "name": "Classroom",
    "file": "classroom.json",
-   "icon": "🎓"
+   "icon": "graduation-cap"
   },
   {
    "id": "lounge",
    "name": "Lounge",
    "file": "lounge.json",
-   "icon": "🛋️"
+   "icon": "couch"
   },
   {
    "id": "conference",
    "name": "Conference Hall",
    "file": "conference.json",
-   "icon": "📊"
+   "icon": "chart-column"
   },
   {
    "id": "gameroom",
    "name": "Game Room",
    "file": "gameroom.json",
-   "icon": "🎮"
+   "icon": "gamepad"
   },
   {
    "id": "cafe",
    "name": "Cafe",
    "file": "cafe.json",
-   "icon": "☕"
+   "icon": "mug-hot"
   },
   {
    "id": "apartment",
    "name": "Apartment",
    "file": "apartment.json",
-   "icon": "🏠"
+   "icon": "house"
   },
   {
    "id": "auditorium",
    "name": "Auditorium",
    "file": "auditorium.json",
-   "icon": "🎤"
+   "icon": "microphone-lines"
+  },
+  {
+   "id": "cinema",
+   "name": "Cinema",
+   "file": "cinema.json",
+   "icon": "film"
+  },
+  {
+   "id": "bedroom",
+   "name": "Bedroom",
+   "file": "bedroom.json",
+   "icon": "bed"
+  },
+  {
+   "id": "study",
+   "name": "Study",
+   "file": "study.json",
+   "icon": "book-open"
+  },
+  {
+   "id": "dining",
+   "name": "Dining Hall",
+   "file": "dining.json",
+   "icon": "utensils"
+  },
+  {
+   "id": "cowork",
+   "name": "Coworking",
+   "file": "cowork.json",
+   "icon": "laptop"
+  },
+  {
+   "id": "archive",
+   "name": "Archive",
+   "file": "archive.json",
+   "icon": "box-archive"
+  },
+  {
+   "id": "lab",
+   "name": "Computer Lab",
+   "file": "lab.json",
+   "icon": "desktop"
   }
  ]
 }

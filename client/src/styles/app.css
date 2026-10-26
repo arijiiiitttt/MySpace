@@ -1236,3 +1236,18 @@ input:focus {
     white-space: nowrap;
   }
 }
+
+/* icons (Font Awesome) */
+#room-count i,
+.map-chip i {
+  margin-right: 4px;
+  font-size: 0.9em;
+  color: #5eead4;
+}
+.emote-menu button {
+  font-size: 22px;
+}
+.tag__emote i {
+  font-size: 28px;
+}
+.toast i{margin-right:4px;color:#5eead4}

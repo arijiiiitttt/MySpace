@@ -257,12 +257,12 @@ test("chat: floods are throttled and empty messages ignored", async () => {
   a.close();
 });
 
-test("emotes: only whitelisted emoji pass", async () => {
+test("emotes: only whitelisted emote ids pass", async () => {
   const a = await join({ room: "emote-1" });
   a.send({ t: "emote", e: "<img src=x>" });
-  a.send({ t: "emote", e: "🎉" });
+  a.send({ t: "emote", e: "party" });
   const em = await a.next("emote");
-  assert.equal(em.e, "🎉");
+  assert.equal(em.e, "party");
   assert.equal(a.msgs.filter((m) => m.t === "emote").length, 1);
   a.close();
 });

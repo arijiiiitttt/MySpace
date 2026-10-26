@@ -1,4 +1,6 @@
 import Phaser from "phaser";
+import "@fortawesome/fontawesome-free/css/fontawesome.min.css";
+import "@fortawesome/fontawesome-free/css/solid.min.css";
 import { fetchStats } from "./app/config.js";
 import { bus } from "./app/emitter.js";
 import { Session } from "./app/Session.js";
@@ -27,6 +29,9 @@ let selectedAvatar = store.get("profile")?.avatar;
 if (!AVATAR_IDS.includes(selectedAvatar)) selectedAvatar = AVATAR_IDS[Math.floor(Math.random() * AVATAR_IDS.length)];
 let publicRooms = [];
 let booted = false;
+
+// the icon font is also drawn inside the game canvas, so make sure it is ready early
+document.fonts?.load('900 14px "Font Awesome 7 Free"').catch(() => {});
 
 // ---------------------------------------------------------------- game
 const game = new Phaser.Game({

@@ -4,6 +4,7 @@ import { store } from "../app/storage.js";
 import { SIT_SHIFT } from "./animations.js";
 import { MyAvatar, RemoteAvatar, WALK_SPEED } from "./Avatar.js";
 import { mapInfo } from "./maps.js";
+import { GLYPH, FA_FAMILY } from "../ui/fa.js";
 import { BODY, NavGrid } from "./nav.js";
 import { buildOffice } from "./office.js";
 
@@ -200,28 +201,96 @@ export class OfficeScene extends Phaser.Scene {
 
   #drawPortals() {
     const font = '"Pixelify Sans", system-ui, sans-serif';
+    // outline of an arched opening: straight sides + a half-round top
+    const arch = (cx, base, w, h) => {
+      const r = w / 2;
+      const pts = [{ x: cx - r, y: base }];
+      for (let i = 0; i <= 14; i++) {
+        const a = Math.PI - (i / 14) * Math.PI;
+        pts.push({ x: cx + Math.cos(a) * r, y: base - h + r - Math.sin(a) * r });
+      }
+      pts.push({ x: cx + r, y: base });
+      return pts;
+    };
+    const mix = (c1, c2, t) => {
+      const ch = (c, sh) => (c >> sh) & 255;
+      const m = (sh) => Math.round(ch(c1, sh) + (ch(c2, sh) - ch(c1, sh)) * t);
+      return (m(16) << 16) | (m(8) << 8) | m(0);
+    };
     for (const p of this.office.portals) {
-      const g = this.add.graphics().setDepth(2);
-      g.fillStyle(0x5eead4, 0.16).fillRoundedRect(p.x + 2, p.y + 2, p.w - 4, p.h - 4, 8);
-      g.lineStyle(2, 0x5eead4, 0.95).strokeRoundedRect(p.x + 2, p.y + 2, p.w - 4, p.h - 4, 8);
-      // little chevrons so it reads as "go through here"
-      g.fillStyle(0x5eead4, 0.9);
+      const W = Math.min(p.w, 80);
+      const H = 82;
+      p.tw = W; // the doorway is narrower than its trigger pad
       const cx = p.x + p.w / 2;
-      const cy = p.y + p.h / 2;
-      for (const dx of [-8, 8]) g.fillTriangle(cx + dx - 5, cy - 6, cx + dx - 5, cy + 6, cx + dx + 5, cy);
-      this.tweens.add({ targets: g, alpha: { from: 0.5, to: 1 }, duration: 900, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+      const base = p.y + p.h - 4;
+      const top = base - H;
+
+      // soft light spilling out of the tunnel mouth (below people)
+      const floor = this.add.graphics().setDepth(2);
+      floor.fillStyle(0x5eead4, 0.13).fillEllipse(cx, base + 2, W + 30, 26);
+      floor.fillStyle(0x1b2733, 0.95).fillRoundedRect(cx - W / 2 + 6, base - 12, W - 12, 12, 3);
+      for (let i = 0; i < 3; i++) floor.fillStyle(0x5eead4, 0.55).fillRect(cx - W / 2 + 14 + i * ((W - 36) / 2), base - 8, 8, 3);
+
+      // the tunnel itself: stone ring, then arches that shrink and darken into the distance
+      const g = this.add.graphics().setDepth(top);
+      g.fillStyle(0x000000, 0.28).fillEllipse(cx, base + 3, W + 14, 12);
+      g.fillStyle(0x6b7480, 1).fillPoints(arch(cx, base, W, H), true);
+      g.lineStyle(2, 0x9aa3ad, 1).strokePoints(arch(cx, base, W, H), true);
+      // brick joints on the ring
+      g.lineStyle(1, 0x535b67, 0.9);
+      for (let i = 1; i < 7; i++) {
+        const a = Math.PI - (i / 7) * Math.PI;
+        const r = W / 2;
+        const ox = cx + Math.cos(a) * r;
+        const oy = top + r - Math.sin(a) * r;
+        g.lineBetween(ox, oy, ox - Math.cos(a) * 9, oy + Math.sin(a) * 9);
+      }
+      g.fillStyle(0x8892a0, 1).fillRect(cx - 5, top - 2, 10, 5); // keystone
+      const N = 6;
+      for (let i = 0; i < N; i++) {
+        const t = i / (N - 1);
+        const w = (W - 22) * (1 - 0.62 * t);
+        const h = (H - 14) * (1 - 0.52 * t);
+        const b = base - 3 - t * 20;
+        g.fillStyle(mix(0x15303d, 0x02080e, t), 1).fillPoints(arch(cx, b, w, h), true);
+        g.lineStyle(1, mix(0x2b5566, 0x07141d, t), 1).strokePoints(arch(cx, b, w, h), true);
+        if (i % 2 === 0) {
+          // wall lamps getting smaller down the tunnel
+          const lampY = b - h * 0.45;
+          g.fillStyle(0xf3d36b, 0.9).fillRect(cx - w / 2 + 1, lampY, 3, 4).fillRect(cx + w / 2 - 4, lampY, 3, 4);
+        }
+      }
+      // floor lines running into the distance
+      g.lineStyle(1, 0x3a6b7c, 0.55);
+      for (const k of [-0.28, 0, 0.28]) g.lineBetween(cx + k * (W - 22), base - 4, cx + k * (W - 22) * 0.38, base - 23);
+
+      // bright end of the tunnel (pulses)
+      const end = this.add.graphics().setDepth(top + 1);
+      const ew = (W - 22) * 0.34;
+      end.fillGradientStyle(0xd9fffa, 0xd9fffa, 0x5eead4, 0x5eead4, 0.95, 0.95, 0.85, 0.85);
+      end.fillPoints(arch(cx, base - 22, ew, (H - 14) * 0.46), true);
+      this.tweens.add({ targets: end, alpha: { from: 0.55, to: 1 }, duration: 1000, yoyo: true, repeat: -1, ease: "Sine.easeInOut" });
+
       const target = mapInfo(p.to);
-      this.add
-        .text(cx, p.y - 2, `${target.icon ?? ""} ${p.label}`.trim(), {
-          fontFamily: font,
-          fontSize: "12px",
-          color: "#d9fffa",
-          stroke: "#04101c",
-          strokeThickness: 4,
-        })
+      const labelY = top - 6;
+      const label = this.add
+        .text(cx, labelY, p.label, { fontFamily: font, fontSize: "12px", color: "#d9fffa", stroke: "#04101c", strokeThickness: 4 })
         .setOrigin(0.5, 1)
         .setResolution(2)
         .setDepth(8999);
+      const glyph = GLYPH[target.icon];
+      if (glyph) {
+        const ico = this.add
+          .text(0, labelY, glyph, { fontFamily: FA_FAMILY, fontStyle: "900", fontSize: "12px", color: "#5eead4", stroke: "#04101c", strokeThickness: 4 })
+          .setOrigin(1, 1)
+          .setResolution(2)
+          .setDepth(8999);
+        ico.x = cx - label.width / 2 - 6;
+        // keep the pair centred on the door
+        const shift = (ico.width + 6) / 2;
+        label.x += shift;
+        ico.x += shift;
+      }
     }
   }
 
@@ -231,8 +300,14 @@ export class OfficeScene extends Phaser.Scene {
     if (seated || this.travelling || !this.office.portals.length) return;
     const fx = me.x;
     const fy = me.y + BODY.cy;
-    const on = this.office.portals.find((p) => fx > p.x + 4 && fx < p.x + p.w - 4 && fy > p.y + 4 && fy < p.y + p.h - 4);
+    const on = this.office.portals.find((p) => Math.abs(fx - (p.x + p.w / 2)) < (p.tw ?? p.w) / 2 && fx > p.x + 4 && fx < p.x + p.w - 4 && fy > p.y + 4 && fy < p.y + p.h - 4);
     if (!on) {
+      this.portalMs = 0;
+      return;
+    }
+    // click-walking past a door must not take it: only count the dwell if the walk ends on this pad
+    const end = this.path[this.path.length - 1];
+    if (end && !(end.x > on.x && end.x < on.x + on.w && end.y + BODY.cy > on.y && end.y + BODY.cy < on.y + on.h)) {
       this.portalMs = 0;
       return;
     }
@@ -437,7 +512,7 @@ export class OfficeScene extends Phaser.Scene {
       const n = session.pcs.get(use.item.id)?.users.length ?? 0;
       parts.push(n ? `<kbd>R</kbd> Join computer <span class="muted">· ${n} here</span>` : `<kbd>R</kbd> Use computer`);
     } else if (use?.type === "vending") {
-      parts.push(`<kbd>R</kbd> Grab a coffee ☕`);
+      parts.push(`<kbd>R</kbd> Grab a coffee`);
     }
     if (sit) {
       const holder = session.seats.get(sit.item.id);
@@ -500,8 +575,8 @@ export class OfficeScene extends Phaser.Scene {
 
   #useVending() {
     this.#cancelPath();
-    this.session.sendEmote("☕");
-    bus.emit("toast", { text: "Fresh coffee. Enjoy! ☕", kind: "info" });
+    this.session.sendEmote("coffee");
+    bus.emit("toast", { text: "Fresh coffee. Enjoy!", kind: "info" });
   }
 
   // ---- seats ---------------------------------------------------------------

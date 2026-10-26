@@ -9,7 +9,7 @@ export const AVATARS = [
 
 export const AVATAR_IDS = AVATARS.map((a) => a.id);
 
-export const EMOTES = ["👋", "😂", "❤️", "👍", "🎉", "😮", "☕", "🤔"];
+export const EMOTES = ["wave", "laugh", "heart", "like", "party", "wow", "coffee", "think"];
 
 export const LIMITS = { NAME_MAX: 20, CHAT_MAX: 280 };
 

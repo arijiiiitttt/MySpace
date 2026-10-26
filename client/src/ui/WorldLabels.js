@@ -1,3 +1,4 @@
+import { fa, EMOTE_ICONS, EMOTE_COLORS } from "./fa.js";
 import { colorFor } from "../net/protocol.js";
 import { icon } from "./icons.js";
 
@@ -91,10 +92,11 @@ export class WorldLabels {
     t.bubbleTimer = setTimeout(() => (t.bubble.hidden = true), 3500 + Math.min(shown.length * 60, 5000));
   }
 
-  emote(id, emoji) {
+  emote(id, key) {
     const t = this.tags.get(id);
     if (!t) return;
-    t.emote.textContent = emoji;
+    t.emote.innerHTML = fa(EMOTE_ICONS[key] ?? "face-smile");
+    t.emote.style.color = EMOTE_COLORS[key] ?? "#fbbf24";
     t.emote.hidden = false;
     t.emote.classList.remove("is-new");
     void t.emote.offsetWidth;
