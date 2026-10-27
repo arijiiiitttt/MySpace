@@ -218,8 +218,8 @@ export class OfficeScene extends Phaser.Scene {
       return (m(16) << 16) | (m(8) << 8) | m(0);
     };
     for (const p of this.office.portals) {
-      const W = Math.min(p.w, 80);
-      const H = 82;
+      const W = Math.min(p.w, 56);
+      const H = 66;
       p.tw = W; // the doorway is narrower than its trigger pad
       const cx = p.x + p.w / 2;
       const base = p.y + p.h - 4;
@@ -229,7 +229,7 @@ export class OfficeScene extends Phaser.Scene {
       const floor = this.add.graphics().setDepth(2);
       floor.fillStyle(0x5eead4, 0.13).fillEllipse(cx, base + 2, W + 30, 26);
       floor.fillStyle(0x1b2733, 0.95).fillRoundedRect(cx - W / 2 + 6, base - 12, W - 12, 12, 3);
-      for (let i = 0; i < 3; i++) floor.fillStyle(0x5eead4, 0.55).fillRect(cx - W / 2 + 14 + i * ((W - 36) / 2), base - 8, 8, 3);
+      for (let i = 0; i < 2; i++) floor.fillStyle(0x5eead4, 0.55).fillRect(cx - W / 2 + 12 + i * (W - 32), base - 8, 8, 3);
 
       // the tunnel itself: stone ring, then arches that shrink and darken into the distance
       const g = this.add.graphics().setDepth(top);
